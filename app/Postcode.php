@@ -10,7 +10,7 @@ class Postcode extends Model
      * @var string
      */
     protected $table = 'postcodes';
-    
+
     /**
      * @var bool
      */
