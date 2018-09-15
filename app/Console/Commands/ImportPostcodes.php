@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 class ImportPostcodes extends Command
 {
@@ -48,6 +49,11 @@ class ImportPostcodes extends Command
                 }
 
                 $rowCount = count(file($file, FILE_SKIP_EMPTY_LINES));
+
+                if ($rowCount === 0) {
+                    throw new FileException('Input file "'.$file.'" has no valid rows.');
+                }
+
                 $handle = fopen($file, 'r');
                 DB::table('postcodes')->truncate();
 

@@ -56,4 +56,12 @@ class ImportPostcodesTest extends TestCase
 
         Artisan::call('import:postcodes', ['file' => 'does_not_exist.csv']);
     }
+
+    public function testImportWithEmptyFile()
+    {
+        $this->expectException('Symfony\Component\HttpFoundation\File\Exception\FileException');
+        $this->expectExceptionMessage('Input file "pcdata_test_empty.csv" has no valid rows.');
+
+        Artisan::call('import:postcodes', ['file' => 'pcdata_test_empty.csv']);
+    }
 }
