@@ -3,17 +3,13 @@
 namespace Tests\Unit;
 
 use App\Postcode;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class ImportPostcodesTest extends TestCase
 {
-    public function setUp()
-    {
-        parent::setUp();
-
-        Postcode::query()->truncate();
-    }
+    use RefreshDatabase;
 
     public function testImportWithValidFile()
     {
