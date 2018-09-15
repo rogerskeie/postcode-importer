@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Postcode;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Support\Facades\DB;
@@ -40,7 +39,6 @@ class ImportPostcodes extends Command
      */
     public function handle()
     {
-
         DB::transaction(
             function () {
                 $file = $this->argument('file');
@@ -49,34 +47,47 @@ class ImportPostcodes extends Command
                     throw new FileNotFoundException('Input file "'.$file.'" not found.');
                 }
 
-                $types = [
-                    '0' => 'odd',
-                    '1' => 'even',
-                    '2' => 'houseboats',
-                    '3' => 'trailers',
-                    ' ' => 'vacant',
-                ];
+                $rowCount = count(file($file, FILE_SKIP_EMPTY_LINES));
                 $handle = fopen($file, 'r');
-                Postcode::query()->truncate();
+                DB::table('postcodes')->truncate();
+
+                $this->output->title('Importing postcode data:');
+                $this->output->progressStart($rowCount);
 
                 while (false !== $row = fgetcsv($handle, 1000, ',')) {
-                    list($id, $numbers, $letters, $lowest, $highest, $type, , , $street, , , $city, , , $municipality, , $province) = $row;
-
-                    Postcode::create(
-                        [
-                            'id' => $id,
-                            'postcode' => $numbers.$letters,
-                            'lowest' => $lowest,
-                            'highest' => $highest,
-                            'type' => $types[$type],
-                            'street' => $street,
-                            'city' => $city,
-                            'municipality' => $municipality,
-                            'province' => $province
-                        ]
-                    );
+                    $this->importRow($row);
+                    $this->output->progressAdvance();
                 }
+
+                $this->output->progressFinish();
+                $this->output->success($rowCount.' rows imported');
             }
+        );
+    }
+
+    private function importRow(array $row)
+    {
+        $types = [
+            '0' => 'odd',
+            '1' => 'even',
+            '2' => 'houseboats',
+            '3' => 'trailers',
+            ' ' => 'vacant',
+        ];
+        list($id, $numbers, $letters, $lowest, $highest, $type, , , $street, , , $city, , , $municipality, , $province) = $row;
+
+        DB::table('postcodes')->insert(
+            [
+                'id' => $id,
+                'postcode' => $numbers.$letters,
+                'lowest' => $lowest,
+                'highest' => $highest,
+                'type' => $types[$type],
+                'street' => $street,
+                'city' => $city,
+                'municipality' => $municipality,
+                'province' => $province
+            ]
         );
     }
 }
