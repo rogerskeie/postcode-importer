@@ -1,0 +1,57 @@
+DESCRIPTION :
+
+The pcdata table contains all postcode data.
+
+FIELDS :
+
+reeksid             int(  6)        Postcode.nl identifier for 'pcreeks' level.
+wijkcode            char(  4)       Four number wijkcode (first part of a postcode)
+                                    domain : '1000'-'9999'
+lettercombinatie    char(  2)       Two character code (second part of a postcode)
+                                    domain : 'AA'-'ZZ'
+huisnr_van          int(  5)        Lowest house number of a postcode range.
+                                    domain : 0-99999
+huisnr_tm           int(  5)        Highest house number of a postcode range.
+                                    domain : 0-99999
+reeksindicatie      char(  1)       Postcode range type.
+                                    domain : {'0','1','2,'3',' '}
+                                    '0' = range of odd housenumbers
+                                    '1' = range of even housenumbers
+                                    '2' = houseboats
+                                    '3' = trailers
+                                    ' ' = vacant
+straatnaam          char( 43)       Street name in accordance with 
+                                    "Gemeentelijk Raadsbesluit". 
+                                    In capital and lowercase letters,
+                                    including punctuation marks. If the streetname
+                                    exceeds 43 characters, it is shortened. 
+                                    Filled with 'Postbus' incase it is a range
+                                    of PO boxes.
+straatnaam_nen      char( 24)       Street name in accordance with NEN 5825 conventions;
+                                    In capital and lowercase letters,
+                                    including punctuation marks. If the streetname
+                                    exceeds 24 characters, it is shortened using
+                                    the NEN 5825 rules. Filled 
+                                    with 'Postbus' in case it is a range
+                                    of PO boxes.
+straatnaam_utf8     varchar( 80)    Street name according to BAG, including diacritics.
+                                    Filled with 'Postbus' in case it is a range of PO boxes.
+straatnaam_utf8_nen varchar( 24)    Street name in accordance with NEN 5825 conventions, including diacritics.
+                                    if the street name exceeds 24 characters, it is shortened using the NEN 5825 rules.
+                                    Filled with 'Postbus' in case it is a range of PO boxes.
+plaatsnaam          char( 24)       Official city name in accordance with the 
+                                    NEN 5825 standard.
+                                    In capitals including punctuation marks 
+                                    (no special characters). If the streetname
+                                    exceeds 24 characters, it is shortened in 
+                                    accordance with the NEN 5825 standard. 
+plaatsnaam_utf8     varchar( 80)    City name according to BAG, including diacritics.
+plaatsnaam_utf8_nen varchar( 24)    City name in accordance with NEN 5825 conventions, including diacritics.
+                                    if the city name exceeds 24 characters, it is shortened using the NEN 5825 rules.
+gemeentenaam        char( 24)       District name in capital and lowercase 
+                                    letters, including punctuation marks.
+gemeentenaam_utf8   varchar( 80)    Municipality name according to BAG, including diacritics.
+gemeentenaam_utf8_nen varchar( 24)  Municipality name in accordance with NEN 5825 conventions, including diacritics.
+                                    if the city name exceeds 24 characters, it is shortened using the NEN 5825 rules.
+provincienaam       char( 20)       Official name of the province, In in capital and 
+                                    lowercase letters, including punctuation marks.
