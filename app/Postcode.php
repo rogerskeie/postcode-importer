@@ -15,4 +15,6 @@ class Postcode extends Model
      * @var bool
      */
     public $incrementing = false;
+
+    protected $guarded = [];
 }

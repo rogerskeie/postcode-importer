@@ -2,8 +2,10 @@
 
 namespace App\Console\Commands;
 
+use App\Postcode;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
+use Illuminate\Support\Facades\DB;
 
 class ImportPostcodes extends Command
 {
@@ -38,10 +40,43 @@ class ImportPostcodes extends Command
      */
     public function handle()
     {
-        $file = $this->argument('file');
 
-        if (!\file_exists($file)) {
-            throw new FileNotFoundException('Input file "'.$file.'" not found.');
-        }
+        DB::transaction(
+            function () {
+                $file = $this->argument('file');
+
+                if (!\file_exists($file)) {
+                    throw new FileNotFoundException('Input file "'.$file.'" not found.');
+                }
+
+                $types = [
+                    '0' => 'odd',
+                    '1' => 'even',
+                    '2' => 'houseboats',
+                    '3' => 'trailers',
+                    ' ' => 'vacant',
+                ];
+                $handle = fopen($file, 'r');
+                Postcode::query()->truncate();
+
+                while (false !== $row = fgetcsv($handle, 1000, ',')) {
+                    list($id, $numbers, $letters, $lowest, $highest, $type, , , $street, , , $city, , , $municipality, , $province) = $row;
+
+                    Postcode::create(
+                        [
+                            'id' => $id,
+                            'postcode' => $numbers.$letters,
+                            'lowest' => $lowest,
+                            'highest' => $highest,
+                            'type' => $types[$type],
+                            'street' => $street,
+                            'city' => $city,
+                            'municipality' => $municipality,
+                            'province' => $province
+                        ]
+                    );
+                }
+            }
+        );
     }
 }
