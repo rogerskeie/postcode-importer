@@ -15,7 +15,8 @@ class ImportPostcodesTest extends TestCase
     {
         $this->assertCount(0, Postcode::all());
 
-        Artisan::call('import:postcodes', ['file' => 'pcdata_test.csv']);
+        $this->artisan('import:postcodes', ['file' => 'pcdata_test.csv'])
+            ->expectsOutput('Importing postcode data:');
         $postcodes = Postcode::all();
 
         $this->assertCount(5, $postcodes);
