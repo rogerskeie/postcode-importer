@@ -4,7 +4,6 @@ namespace Tests\Unit;
 
 use App\Postcode;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class ImportPostcodesTest extends TestCase
@@ -15,7 +14,7 @@ class ImportPostcodesTest extends TestCase
     {
         $this->assertCount(0, Postcode::all());
 
-        $this->artisan('import:postcodes', ['file' => 'pcdata_test.csv'])
+        $this->artisan('import:postcodes', ['file' => base_path('tests/Unit/') . 'pcdata_test.csv'])
             ->expectsOutput('Importing postcode data:');
         $postcodes = Postcode::all();
 
@@ -51,14 +50,14 @@ class ImportPostcodesTest extends TestCase
         $this->expectException('Illuminate\Contracts\Filesystem\FileNotFoundException');
         $this->expectExceptionMessage('Input file "does_not_exist.csv" not found.');
 
-        Artisan::call('import:postcodes', ['file' => 'does_not_exist.csv']);
+        $this->artisan('import:postcodes', ['file' => 'does_not_exist.csv']);
     }
 
     public function testImportWithEmptyFile()
     {
         $this->expectException('Symfony\Component\HttpFoundation\File\Exception\FileException');
-        $this->expectExceptionMessage('Input file "pcdata_test_empty.csv" has no valid rows.');
+        $this->expectExceptionMessage('Input file "' . base_path('tests/Unit/') . 'pcdata_test_empty.csv" has no valid rows.');
 
-        Artisan::call('import:postcodes', ['file' => 'pcdata_test_empty.csv']);
+        $this->artisan('import:postcodes', ['file' => base_path('tests/Unit/') . 'pcdata_test_empty.csv']);
     }
 }
